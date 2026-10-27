@@ -1,0 +1,6 @@
+{
+ "schemaVersion":1,"id":"donutprofit","version":"${version}",
+ "name":"demo16's bal tracker","description":"Donut SMP profit/loss HUD",
+ "environment":"client","entrypoints":{"client":["com.donutprofit.DonutProfitClient"]},
+ "depends":{"fabricloader":">=0.17.0","minecraft":"1.21.11","java":">=21","fabric-api":"*"}
+}
