@@ -5,10 +5,11 @@ import java.util.regex.Pattern;
 
 /** Parses Donut SMP /bal chat responses and tracks profit relative to a baseline. */
 public final class BalanceTracker {
-    private static final Pattern BALANCE = Pattern.compile("(?i)\\byou have\\s+\\$?([0-9][0-9,]*(?:\\.[0-9]+)?)\\s*(?:dollars|coins|\\$)?");
+    private static final Pattern BALANCE = Pattern.compile("(?i)\\byou have\\s+\\$?\\s*([0-9][0-9,]*(?:\\.[0-9]+)?)\\s*(?:dollars|coins|\\$)?");
     private long current;
     private long baseline;
     private boolean initialized;
+    private boolean baselineRestored;
 
     public boolean acceptChat(String message) {
         Matcher match = BALANCE.matcher(message);
@@ -17,11 +18,11 @@ public final class BalanceTracker {
         try { parsed = (long) Double.parseDouble(match.group(1).replace(",", "")); }
         catch (NumberFormatException ex) { return false; }
         current = parsed;
-        if (!initialized) { baseline = parsed; initialized = true; }
+        if (!initialized) { if (!baselineRestored) baseline = parsed; initialized = true; }
         return true;
     }
     public void reset() { if (initialized) baseline = current; }
-    public void setBaseline(long amount) { baseline = amount; }
+    public void setBaseline(long amount) { baseline = amount; baselineRestored = true; }
     public long baseline() { return baseline; }
     public long profit() { return current - baseline; }
     public boolean initialized() { return initialized; }

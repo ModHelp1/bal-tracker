@@ -9,7 +9,7 @@ import net.minecraft.text.Text;
 public final class ProfitSettingsScreen extends Screen {
 
     private final Screen parent;
-    private boolean dragging = false;
+
 
     ProfitSettingsScreen(Screen parent) {
         super(Text.literal("demo16's bal tracker"));
@@ -66,10 +66,25 @@ public final class ProfitSettingsScreen extends Screen {
             }
         ).dimensions(cx + 5, height - 65, 100, 20).build());
 
+        addDrawableChild(ButtonWidget.builder(Text.literal("Left"), b -> move(-0.02f, 0f))
+            .dimensions(cx - 105, height - 140, 48, 20).build());
+        addDrawableChild(ButtonWidget.builder(Text.literal("Right"), b -> move(0.02f, 0f))
+            .dimensions(cx - 52, height - 140, 48, 20).build());
+        addDrawableChild(ButtonWidget.builder(Text.literal("Up"), b -> move(0f, -0.02f))
+            .dimensions(cx + 5, height - 140, 48, 20).build());
+        addDrawableChild(ButtonWidget.builder(Text.literal("Down"), b -> move(0f, 0.02f))
+            .dimensions(cx + 58, height - 140, 48, 20).build());
+
         addDrawableChild(ButtonWidget.builder(
             Text.literal("Done"),
             b -> close()
         ).dimensions(cx - 105, height - 35, 210, 20).build());
+    }
+
+    private static void move(float dx, float dy) {
+        Settings.x = Math.max(0f, Math.min(0.95f, Settings.x + dx));
+        Settings.y = Math.max(0f, Math.min(0.90f, Settings.y + dy));
+        Settings.save();
     }
 
     private static int nextColor(int current) {
@@ -103,7 +118,7 @@ public final class ProfitSettingsScreen extends Screen {
 
         context.drawCenteredTextWithShadow(
             textRenderer,
-            "Drag the preview to move the HUD",
+            "Use the arrow buttons to move the HUD",
             width / 2,
             25,
             0xFFFFFFFF

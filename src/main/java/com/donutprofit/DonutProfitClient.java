@@ -8,10 +8,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.util.Identifier;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import org.lwjgl.glfw.GLFW;
 import java.text.DecimalFormat;
-import java.util.Locale;
+
 
 public final class DonutProfitClient implements ClientModInitializer {
  public static final BalanceTracker TRACKER = new BalanceTracker();
@@ -19,8 +20,9 @@ public final class DonutProfitClient implements ClientModInitializer {
  private static final DecimalFormat FORMAT = new DecimalFormat("#,###");
  @Override public void onInitializeClient() {
   Settings.load();
-  settingsKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.donutprofit.settings", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_O, "category.donutprofit"));
-  resetKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.donutprofit.reset", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_P, "category.donutprofit"));
+  KeyBinding.Category category = KeyBinding.Category.create(Identifier.of("donutprofit", "controls"));
+  settingsKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.donutprofit.settings", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_O, category));
+  resetKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.donutprofit.reset", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_P, category));
   ClientReceiveMessageEvents.GAME.register((message, overlay) -> { if (TRACKER.acceptChat(message.getString())) Settings.saveBaseline(TRACKER); });
   ClientReceiveMessageEvents.CHAT.register((message, signedMessage, sender, params, receptionTimestamp) -> { if (TRACKER.acceptChat(message.getString())) Settings.saveBaseline(TRACKER); });
   ClientTickEvents.END_CLIENT_TICK.register(client -> {
