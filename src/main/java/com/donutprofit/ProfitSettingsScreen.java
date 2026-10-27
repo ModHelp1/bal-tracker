@@ -5,6 +5,9 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
+import net.minecraft.client.input.Click;
+
+
 public final class ProfitSettingsScreen extends Screen {
  private final Screen parent;
  private boolean dragging;
@@ -29,15 +32,49 @@ public final class ProfitSettingsScreen extends Screen {
   context.getMatrices().pushMatrix(); context.getMatrices().translate(x,y); context.getMatrices().scale(Settings.scale,Settings.scale);
   context.drawTextWithShadow(textRenderer,sample,0,0,color); context.getMatrices().popMatrix();
  }
- @Override public boolean mouseClicked(double mouseX,double mouseY,int button) {
-  int x=Math.round(Settings.x*width),y=Math.round(Settings.y*height);
-  if(button==0 && mouseX>=x-8 && mouseX<=x+260 && mouseY>=y-8 && mouseY<=y+30*Settings.scale) { dragging=true; return true; }
-  return super.mouseClicked(mouseX,mouseY,button);
- }
- @Override public boolean mouseDragged(double mouseX,double mouseY,int button,double deltaX,double deltaY) {
-  if(dragging) { Settings.x=Math.max(0,Math.min(0.95f,(float)mouseX/width)); Settings.y=Math.max(0,Math.min(0.9f,(float)mouseY/height)); return true; }
-  return super.mouseDragged(mouseX,mouseY,button,deltaX,deltaY);
- }
- @Override public boolean mouseReleased(double mouseX,double mouseY,int button) { if(dragging) { dragging=false; Settings.save(); return true; } return super.mouseReleased(mouseX,mouseY,button); }
- @Override public void close() { Settings.save(); client.setScreen(parent); }
+
+@Override
+public boolean mouseClicked(Click click, boolean doubled) {
+    double mouseX = click.x();
+    double mouseY = click.y();
+
+    int x = Math.round(Settings.x * width);
+    int y = Math.round(Settings.y * height);
+
+    if (click.button() == 0
+            && mouseX >= x - 8
+            && mouseX <= x + 260
+            && mouseY >= y - 8
+            && mouseY <= y + 30 * Settings.scale) {
+        dragging = true;
+        return true;
+    }
+
+    return super.mouseClicked(click, doubled);
+}
+
+@Override
+public boolean mouseDragged(
+        Click click, double deltaX, double deltaY) {
+
+    if (dragging) {
+        Settings.x = Math.max(0, Math.min(0.95f,
+                (float) click.x() / width));
+        Settings.y = Math.max(0, Math.min(0.9f,
+                (float) click.y() / height));
+        return true;
+    }
+
+    return super.mouseDragged(click, deltaX, deltaY);
+}
+
+@Override
+public boolean mouseReleased(Click click) {
+    if (dragging) {
+        dragging = false;
+        Settings.save();
+        return true;
+    }
+
+    return super.mouseReleased(click);
 }
