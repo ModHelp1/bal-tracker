@@ -4,7 +4,6 @@ package com.donutprofit;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.input.Click;
 import net.minecraft.text.Text;
 
 public final class ProfitSettingsScreen extends Screen {
@@ -25,9 +24,7 @@ public final class ProfitSettingsScreen extends Screen {
             Text.literal("Reset profit to $0"),
             b -> {
                 DonutProfitClient.TRACKER.reset();
-                Settings.saveBaseline(
-                    DonutProfitClient.TRACKER
-                );
+                Settings.saveBaseline(DonutProfitClient.TRACKER);
             }
         ).dimensions(cx - 105, height - 115, 210, 20).build());
 
@@ -149,72 +146,6 @@ public final class ProfitSettingsScreen extends Screen {
         );
 
         context.getMatrices().popMatrix();
-    }
-
-    @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
-        double mouseX = click.x();
-        double mouseY = click.y();
-
-        int x = Math.round(Settings.x * width);
-        int y = Math.round(Settings.y * height);
-
-        if (
-            click.button() == 0 &&
-            mouseX >= x - 8 &&
-            mouseX <= x + 260 &&
-            mouseY >= y - 8 &&
-            mouseY <= y + 30 * Settings.scale
-        ) {
-            dragging = true;
-            return true;
-        }
-
-        return super.mouseClicked(click, doubled);
-    }
-
-    @Override
-    public boolean mouseDragged(
-        Click click,
-        double deltaX,
-        double deltaY
-    ) {
-        if (dragging) {
-            Settings.x = Math.max(
-                0,
-                Math.min(
-                    0.95f,
-                    (float) click.x() / width
-                )
-            );
-
-            Settings.y = Math.max(
-                0,
-                Math.min(
-                    0.9f,
-                    (float) click.y() / height
-                )
-            );
-
-            return true;
-        }
-
-        return super.mouseDragged(
-            click,
-            deltaX,
-            deltaY
-        );
-    }
-
-    @Override
-    public boolean mouseReleased(Click click) {
-        if (dragging) {
-            dragging = false;
-            Settings.save();
-            return true;
-        }
-
-        return super.mouseReleased(click);
     }
 
     @Override
